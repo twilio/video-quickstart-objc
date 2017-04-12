@@ -24,11 +24,13 @@
 @property (nonatomic, strong) TVILocalVideoTrack *localVideoTrack;
 @property (nonatomic, strong) TVILocalAudioTrack *localAudioTrack;
 @property (nonatomic, strong) TVIParticipant *participant;
-@property (nonatomic, strong) TVIVideoView *remoteView;
+@property (nonatomic, weak) TVIVideoView *remoteView;
 
 #pragma mark UI Element Outlets and handles
 
+// `TVIVideoView` created from a storyboard
 @property (weak, nonatomic) IBOutlet TVIVideoView *previewView;
+
 @property (nonatomic, weak) IBOutlet UIView *connectButton;
 @property (nonatomic, weak) IBOutlet UIButton *disconnectButton;
 @property (nonatomic, weak) IBOutlet UILabel *messageLabel;
@@ -189,13 +191,15 @@
 }
 
 - (void)setupRemoteView {
-    self.remoteView = [[TVIVideoView alloc] init];
+    // Creating `TVIVideoView` programmatically
+    TVIVideoView *remoteView = [[TVIVideoView alloc] init];
     
-    [self.view addSubview:self.remoteView];
+    // `TVIVideoView` supports UIViewContentModeScaleToFill, UIViewContentModeScaleAspectFill and UIViewContentModeScaleAspectFit
+    // UIViewContentModeScaleAspectFit is the default mode when you create `TVIVideoView` programmatically.
+    self.remoteView.contentMode = UIViewContentModeScaleAspectFit;
     
-    [self.view bringSubviewToFront:self.previewView];
-    [self.view bringSubviewToFront:self.micButton];
-    [self.view bringSubviewToFront:self.disconnectButton];
+    [self.view insertSubview:remoteView atIndex:0];
+    self.remoteView = remoteView;
     
     NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:self.remoteView
                                                                attribute:NSLayoutAttributeCenterX
@@ -253,7 +257,6 @@
         if ([self.participant.media.videoTracks count] > 0) {
             [self.participant.media.videoTracks[0] removeRenderer:self.remoteView];
             [self.remoteView removeFromSuperview];
-            self.remoteView = nil;
         }
         self.participant = nil;
     }
@@ -332,7 +335,6 @@
     if (self.participant == participant) {
         [videoTrack removeRenderer:self.remoteView];
         [self.remoteView removeFromSuperview];
-        self.remoteView = nil;
     }
 }
 
@@ -365,9 +367,6 @@
 }
 
 #pragma mark - TVIVideoViewDelegate
-
-- (void)videoViewDidReceiveData:(TVIVideoView *)view {
-}
 
 - (void)videoView:(TVIVideoView *)view videoDimensionsDidChange:(CMVideoDimensions)dimensions {
     NSLog(@"Dimensions changed to: %d x %d", dimensions.width, dimensions.height);
