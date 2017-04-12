@@ -24,11 +24,11 @@
 @property (nonatomic, strong) TVILocalVideoTrack *localVideoTrack;
 @property (nonatomic, strong) TVILocalAudioTrack *localAudioTrack;
 @property (nonatomic, strong) TVIParticipant *participant;
+@property (nonatomic, strong) TVIVideoView *remoteView;
 
 #pragma mark UI Element Outlets and handles
 
-@property (nonatomic, weak) IBOutlet UIView *remoteView;
-@property (nonatomic, weak) IBOutlet UIView *previewView;
+@property (weak, nonatomic) IBOutlet TVIVideoView *previewView;
 @property (nonatomic, weak) IBOutlet UIView *connectButton;
 @property (nonatomic, weak) IBOutlet UIButton *disconnectButton;
 @property (nonatomic, weak) IBOutlet UILabel *messageLabel;
@@ -128,8 +128,8 @@
     if (!self.localVideoTrack) {
         [self logMessage:@"Failed to add video track"];
     } else {
-        // Attach view to video track for local preview
-        [self.localVideoTrack attach:self.previewView];
+        // Add renderer to video track for local preview
+        [self.localVideoTrack addRenderer:self.previewView];
         
         [self logMessage:@"Video track added to localMedia"];
         
@@ -188,6 +188,49 @@
     [self logMessage:[NSString stringWithFormat:@"Attempting to connect to room %@", self.roomTextField.text]];
 }
 
+- (void)setupRemoteView {
+    self.remoteView = [[TVIVideoView alloc] init];
+    
+    [self.view addSubview:self.remoteView];
+    
+    [self.view bringSubviewToFront:self.previewView];
+    [self.view bringSubviewToFront:self.micButton];
+    [self.view bringSubviewToFront:self.disconnectButton];
+    
+    NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:self.remoteView
+                                                               attribute:NSLayoutAttributeCenterX
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:self.view
+                                                               attribute:NSLayoutAttributeCenterX
+                                                              multiplier:1
+                                                                constant:0];
+    [self.view addConstraint:centerX];
+    NSLayoutConstraint *centerY = [NSLayoutConstraint constraintWithItem:self.remoteView
+                                                               attribute:NSLayoutAttributeCenterY
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:self.view
+                                                               attribute:NSLayoutAttributeCenterY
+                                                              multiplier:1
+                                                                constant:0];
+    [self.view addConstraint:centerY];
+    NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:self.remoteView
+                                                             attribute:NSLayoutAttributeWidth
+                                                             relatedBy:NSLayoutRelationEqual
+                                                                toItem:self.view
+                                                             attribute:NSLayoutAttributeWidth
+                                                            multiplier:1
+                                                              constant:0];
+    [self.view addConstraint:width];
+    NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.remoteView
+                                                              attribute:NSLayoutAttributeHeight
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self.view
+                                                              attribute:NSLayoutAttributeHeight
+                                                             multiplier:1
+                                                               constant:0];
+    [self.view addConstraint:height];
+}
+
 // Reset the client ui status
 - (void)showRoomUI:(BOOL)inRoom {
     self.roomTextField.hidden = inRoom;
@@ -208,7 +251,9 @@
 - (void)cleanupRemoteParticipant {
     if (self.participant) {
         if ([self.participant.media.videoTracks count] > 0) {
-            [self.participant.media.videoTracks[0] detach:self.remoteView];
+            [self.participant.media.videoTracks[0] removeRenderer:self.remoteView];
+            [self.remoteView removeFromSuperview];
+            self.remoteView = nil;
         }
         self.participant = nil;
     }
@@ -276,7 +321,8 @@
     [self logMessage:[NSString stringWithFormat:@"Participant %@ added video track.", participant.identity]];
     
     if (self.participant == participant) {
-        [videoTrack attach:self.remoteView];
+        [self setupRemoteView];
+        [videoTrack addRenderer:self.remoteView];
     }
 }
 
@@ -284,7 +330,9 @@
     [self logMessage:[NSString stringWithFormat:@"Participant %@ removed video track.", participant.identity]];
     
     if (self.participant == participant) {
-        [videoTrack detach:self.remoteView];
+        [videoTrack removeRenderer:self.remoteView];
+        [self.remoteView removeFromSuperview];
+        self.remoteView = nil;
     }
 }
 
