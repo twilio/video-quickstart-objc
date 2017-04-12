@@ -10,7 +10,7 @@
 
 #import <TwilioVideo/TwilioVideo.h>
 
-@interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate>
+@interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate>
 
 // Configure access token manually for testing in `ViewDidLoad`, if desired! Create one manually in the console.
 @property (nonatomic, strong) NSString *accessToken;
@@ -362,6 +362,16 @@
         type = @"video";
     }
     [self logMessage:[NSString stringWithFormat:@"Participant %@ disabled %@ track.", participant.identity, type]];
+}
+
+#pragma mark - TVIVideoViewDelegate
+
+- (void)videoViewDidReceiveData:(TVIVideoView *)view {
+}
+
+- (void)videoView:(TVIVideoView *)view videoDimensionsDidChange:(CMVideoDimensions)dimensions {
+    NSLog(@"Dimensions changed to: %d x %d", dimensions.width, dimensions.height);
+    [self.view setNeedsLayout];
 }
 
 @end
