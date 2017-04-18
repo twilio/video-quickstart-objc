@@ -10,7 +10,7 @@
 
 #import <TwilioVideo/TwilioVideo.h>
 
-@interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate>
+@interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate, TVICameraCapturerDelegate>
 
 // Configure access token manually for testing in `ViewDidLoad`, if desired! Create one manually in the console.
 @property (nonatomic, strong) NSString *accessToken;
@@ -125,7 +125,7 @@
         return;
     }
     
-    self.camera = [[TVICameraCapturer alloc] init];
+    self.camera = [[TVICameraCapturer alloc] initWithSource:TVICameraCaptureSourceFrontCamera delegate:self];
     self.localVideoTrack = [self.localMedia addVideoTrack:YES capturer:self.camera];
     if (!self.localVideoTrack) {
         [self logMessage:@"Failed to add video track"];
@@ -371,6 +371,12 @@
 - (void)videoView:(TVIVideoView *)view videoDimensionsDidChange:(CMVideoDimensions)dimensions {
     NSLog(@"Dimensions changed to: %d x %d", dimensions.width, dimensions.height);
     [self.view setNeedsLayout];
+}
+
+#pragma mark - TVICameraCapturerDelegate
+
+- (void)cameraCapturer:(TVICameraCapturer *)capturer didStartWithSource:(TVICameraCaptureSource)source {
+    self.previewView.mirror = (source == TVICameraCaptureSourceFrontCamera);
 }
 
 @end
