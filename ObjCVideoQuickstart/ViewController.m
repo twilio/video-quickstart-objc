@@ -142,10 +142,10 @@
 }
 
 - (void)flipCamera {
-    if (self.camera.source == TVIVideoCaptureSourceFrontCamera) {
-        [self.camera selectSource:TVIVideoCaptureSourceBackCameraWide];
+    if (self.camera.source == TVICameraCaptureSourceFrontCamera) {
+        [self.camera selectSource:TVICameraCaptureSourceBackCameraWide];
     } else {
-        [self.camera selectSource:TVIVideoCaptureSourceFrontCamera];
+        [self.camera selectSource:TVICameraCaptureSourceFrontCamera];
     }
 }
 
