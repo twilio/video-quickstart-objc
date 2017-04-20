@@ -47,7 +47,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"version = %@",[TVIVideoClient version]);
+    NSLog(@"version = %@",[TwilioVideo version]);
     // Configure access token manually for testing, if desired! Create one manually in the console
     self.accessToken = @"TWILIO_ACCESS_TOKEN";
     
@@ -185,7 +185,7 @@
     }];
     
     // Connect to the Room using the options we provided.
-    self.room = [TVIVideoClient connectWithOptions:connectOptions delegate:self];
+    self.room = [TwilioVideo connectWithOptions:connectOptions delegate:self];
     
     [self logMessage:[NSString stringWithFormat:@"Attempting to connect to room %@", self.roomTextField.text]];
 }
