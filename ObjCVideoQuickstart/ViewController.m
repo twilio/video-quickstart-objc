@@ -254,8 +254,8 @@
 
 - (void)cleanupRemoteParticipant {
     if (self.participant) {
-        if ([self.participant.media.videoTracks count] > 0) {
-            [self.participant.media.videoTracks[0] removeRenderer:self.remoteView];
+        if ([self.participant.videoTracks count] > 0) {
+            [self.participant.videoTracks[0] removeRenderer:self.remoteView];
             [self.remoteView removeFromSuperview];
         }
         self.participant = nil;
