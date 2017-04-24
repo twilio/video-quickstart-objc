@@ -19,7 +19,6 @@
 #pragma mark Video SDK components
 
 @property (nonatomic, strong) TVIRoom *room;
-@property (nonatomic, strong) TVILocalMedia *localMedia;
 @property (nonatomic, strong) TVICameraCapturer *camera;
 @property (nonatomic, strong) TVILocalVideoTrack *localVideoTrack;
 @property (nonatomic, strong) TVILocalAudioTrack *localAudioTrack;
@@ -54,9 +53,6 @@
     // Using the PHP server to provide access tokens? Make sure the tokenURL is pointing to the correct location -
     // the default is http://localhost:8000/token.php
     self.tokenUrl = @"http://localhost:8000/token.php";
-    
-    // LocalMedia represents the collection of tracks that we are sending to other Participants from our VideoClient.
-    self.localMedia = [[TVILocalMedia alloc] init];
     
     if ([PlatformUtils isSimulator]) {
         [self.previewView removeFromSuperview];
@@ -126,7 +122,7 @@
     }
     
     self.camera = [[TVICameraCapturer alloc] initWithSource:TVICameraCaptureSourceFrontCamera delegate:self];
-    self.localVideoTrack = [self.localMedia addVideoTrack:YES capturer:self.camera];
+    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera];
     if (!self.localVideoTrack) {
         [self logMessage:@"Failed to add video track"];
     } else {
@@ -151,15 +147,19 @@
 
 - (void)prepareLocalMedia {
     
-    // We will offer local audio and video when we connect to room.
+    // We will share local audio and video when we connect to room.
     
-    // Adding local audio track to localMedia
+    // Create an audio track.
     if (!self.localAudioTrack) {
-        self.localAudioTrack = [self.localMedia addAudioTrack:YES];
+        self.localAudioTrack = [TVILocalAudioTrack track];
+
+        if (!self.localAudioTrack) {
+            [self logMessage:@"Failed to add audio track"];
+        }
     }
-    
-    // Adding local video track to localMedia and starting local preview if it is not already started.
-    if (self.localMedia.videoTracks.count == 0) {
+
+    // Create a video track which captures from the camera.
+    if (!self.localVideoTrack) {
         [self startPreview];
     }
 }
@@ -177,8 +177,9 @@
                                                                       block:^(TVIConnectOptionsBuilder * _Nonnull builder) {
 
         // Use the local media that we prepared earlier.
-        builder.localMedia = self.localMedia;
-        
+        builder.audioTracks = self.localAudioTrack ? @[ self.localAudioTrack ] : @[ ];
+        builder.videoTracks = self.localVideoTrack ? @[ self.localVideoTrack ] : @[ ];
+
         // The name of the Room where the Client will attempt to connect to. Please note that if you pass an empty
         // Room `name`, the Client will create one for you. You can get the name or sid from any connected Room.
         builder.roomName = self.roomTextField.text;
