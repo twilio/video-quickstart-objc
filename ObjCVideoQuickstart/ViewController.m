@@ -46,7 +46,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"version = %@",[TwilioVideo version]);
+
+    [self logMessage:[NSString stringWithFormat:@"TwilioVideo v%@", [TwilioVideo version]]];
+
     // Configure access token manually for testing, if desired! Create one manually in the console
     self.accessToken = @"TWILIO_ACCESS_TOKEN";
     
@@ -264,6 +266,7 @@
 }
 
 - (void)logMessage:(NSString *)msg {
+    NSLog(@"%@", msg);
     self.messageLabel.text = msg;
 }
 
