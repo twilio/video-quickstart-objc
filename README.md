@@ -25,7 +25,7 @@ Note: if your app uses Swift see [video-quickstart-swift](https://github.com/twi
 
 1. Run `pod install` from the root directory of this project. CocoaPods will install `TwilioVideo.framework` and then set up an `xcworkspace`.
 
-1. Open `ObjCVideoQuickstart.xcworkspace`.
+1. Open `VideoQuickStart.xcworkspace`.
 
 Note: You may need to update the CocoaPods [Master Spec Repo](https://github.com/CocoaPods/Specs) by running `pod repo update master` in order to fetch the latest specs for TwilioVideo.
 
@@ -39,7 +39,7 @@ You can integrate `TwilioVideo.framework` manually by following these [install i
 
 To get started with the Quickstart application follow these steps:
 
-1. Open this `ObjCVideoQuickstart.xcworkspace` in Xcode
+1. Open this `VideoQuickStart.xcworkspace` in Xcode
 
 <img width="700px" src="images/quickstart/xcode-video-quickstart.png"/>
 
