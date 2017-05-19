@@ -13,6 +13,7 @@
 		8A0A1F221ECD1FFC0008C1AF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A0A1F201ECD1FFC0008C1AF /* Main.storyboard */; };
 		8A0A1F241ECD1FFC0008C1AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A0A1F231ECD1FFC0008C1AF /* Assets.xcassets */; };
 		8A0A1F271ECD1FFC0008C1AF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A0A1F251ECD1FFC0008C1AF /* LaunchScreen.storyboard */; };
+		8A85E4951ECE97F6004719C8 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A85E4941ECE97F6004719C8 /* Utils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		8A0A1F231ECD1FFC0008C1AF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A0A1F261ECD1FFC0008C1AF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A0A1F281ECD1FFC0008C1AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A85E4931ECE97F6004719C8 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		8A85E4941ECE97F6004719C8 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +63,8 @@
 			children = (
 				8A0A1F1A1ECD1FFC0008C1AF /* AppDelegate.h */,
 				8A0A1F1B1ECD1FFC0008C1AF /* AppDelegate.m */,
+				8A85E4931ECE97F6004719C8 /* Utils.h */,
+				8A85E4941ECE97F6004719C8 /* Utils.m */,
 				8A0A1F1D1ECD1FFC0008C1AF /* ViewController.h */,
 				8A0A1F1E1ECD1FFC0008C1AF /* ViewController.m */,
 				8A0A1F201ECD1FFC0008C1AF /* Main.storyboard */,

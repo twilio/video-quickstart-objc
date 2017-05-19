@@ -18,12 +18,12 @@
 
 #pragma mark Video SDK components
 
-@property (nonatomic, strong) TVIRoom *room;
 @property (nonatomic, strong) TVICameraCapturer *camera;
 @property (nonatomic, strong) TVILocalVideoTrack *localVideoTrack;
 @property (nonatomic, strong) TVILocalAudioTrack *localAudioTrack;
 @property (nonatomic, strong) TVIParticipant *participant;
 @property (nonatomic, weak) TVIVideoView *remoteView;
+@property (nonatomic, strong) TVIRoom *room;
 
 #pragma mark UI Element Outlets and handles
 
@@ -119,7 +119,9 @@
 #pragma mark - Private
 
 - (void)startPreview {
+    // TVICameraCapturer is not supported with the Simulator.
     if ([PlatformUtils isSimulator]) {
+        [self.previewView removeFromSuperview];
         return;
     }
     
@@ -131,7 +133,7 @@
         // Add renderer to video track for local preview
         [self.localVideoTrack addRenderer:self.previewView];
         
-        [self logMessage:@"Video track added to localMedia"];
+        [self logMessage:@"Video track created"];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                               action:@selector(flipCamera)];
