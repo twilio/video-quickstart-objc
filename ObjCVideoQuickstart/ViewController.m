@@ -56,13 +56,9 @@
     // the default is http://localhost:8000/token.php
     self.tokenUrl = @"http://localhost:8000/token.php";
     
-    if ([PlatformUtils isSimulator]) {
-        [self.previewView removeFromSuperview];
-    } else {
-        // Preview our local camera track in the local video preview view.
-        [self startPreview];
-    }
-    
+    // Preview our local camera track in the local video preview view.
+    [self startPreview];
+
     // Disconnect and mic button will be displayed when client is connected to a room.
     self.disconnectButton.hidden = YES;
     self.micButton.hidden = YES;

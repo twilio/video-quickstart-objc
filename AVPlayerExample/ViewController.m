@@ -72,8 +72,7 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
 
-    // Finally, setup the audio session, and Media
-
+    // Manually configure the AudioSession
     [self setupAudioSession];
 
     // Prepare local media which we will share with Room Participants.
@@ -144,7 +143,7 @@
 }
 
 - (void)prepareMedia {
-    // We will share local audio and video when we connect to room.
+    // We will share audio and video when we connect to the Room.
 
     // Create an audio track.
     if (!self.localAudioTrack) {
@@ -164,14 +163,14 @@
     // Instead we will setup audio once, and deal with activation and de-activation manually.
     [[TVIAudioController sharedController] configureAudioSession:TVIAudioOutputVideoChatDefault];
 
-    // This is similar to when CallKit is used, but instead
+    // This is similar to when CallKit is used, but instead we will activate AVAudioSession ourselves.
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setActive:YES error:&error];
     if (error) {
         NSLog(@"Couldn't activate AVAudioSession. %@", error);
-    } else {
-        [[TVIAudioController sharedController] startAudio];
     }
+
+    [[TVIAudioController sharedController] startAudio];
 }
 
 - (void)resetAudioSession {
