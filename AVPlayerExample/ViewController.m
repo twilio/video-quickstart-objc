@@ -49,6 +49,11 @@
 
 @implementation ViewController
 
+- (void)dealloc {
+    // We are done with AVAudioSession
+    [self resetAudioSession];
+}
+
 #pragma mark - UIViewController
 
 - (void)viewDidLoad {
@@ -77,6 +82,12 @@
 
     // Prepare local media which we will share with Room Participants.
     [self prepareMedia];
+}
+
+#pragma mark - NSObject
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    NSLog(@"Player changed: %@ status: %@", object, change);
 }
 
 #pragma mark - Public
@@ -167,7 +178,7 @@
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setActive:YES error:&error];
     if (error) {
-        NSLog(@"Couldn't activate AVAudioSession. %@", error);
+        [self logMessage:[NSString stringWithFormat:@"Couldn't activate AVAudioSession. %@", error]];
     }
 
     [[TVIAudioController sharedController] startAudio];
@@ -177,10 +188,35 @@
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setActive:NO error:&error];
     if (error) {
-        NSLog(@"Couldn't deactivate AVAudioSession. %@", error);
+        [self logMessage:[NSString stringWithFormat:@"Couldn't activate AVAudioSession. %@", error]];
     }
 
     [[TVIAudioController sharedController] stopAudio];
+}
+
+- (void)startVideoPlayer {
+    if (self.videoPlayer != nil) {
+        [self logMessage:@"Already prepared AVPlayer."];
+        [self.videoPlayer play];
+        return;
+    }
+
+    NSURL *contentURL = [NSURL URLWithString:@"http://www.podtrac.com/pts/redirect.mp3/traffic.libsyn.com/liftoffrelay/Liftoff_46.mp3"];
+    AVPlayer *player = [AVPlayer playerWithURL:contentURL];
+    [player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [player play];
+
+    self.videoPlayer = player;
+
+    // TODO: Add Video UI on screen.
+}
+
+- (void)stopVideoPlayer {
+    [self.videoPlayer pause];
+    [self.videoPlayer removeObserver:self forKeyPath:@"status"];
+    self.videoPlayer = nil;
+
+    // TODO: Remove Video UI from screen.
 }
 
 - (void)fetchTokenAndConnect {
@@ -204,6 +240,9 @@
         [self logMessage:@"Please provide a valid token to connect to a room"];
         return;
     }
+
+    // Unfortunately, due to an implementation detail in TwilioVideo this must be called every time.
+    [self setupAudioSession];
 
     TVIConnectOptions *connectOptions = [TVIConnectOptions optionsWithToken:self.accessToken
                                                                       block:^(TVIConnectOptionsBuilder * _Nonnull builder) {
@@ -311,7 +350,8 @@
         self.participant = room.participants[0];
         self.participant.delegate = self;
     } else {
-        // Start AVPlayer pre-roll content here.
+        // If there are no Participants, we will play the pre-roll content instead.
+        [self startVideoPlayer];
     }
 }
 
@@ -338,12 +378,20 @@
         self.participant.delegate = self;
     }
 
+    if ([room.participants count] == 1) {
+        [self stopVideoPlayer];
+    }
+
     [self logMessage:[NSString stringWithFormat:@"Room %@ participant %@ connected", room.name, participant.identity]];
 }
 
 - (void)room:(TVIRoom *)room participantDidDisconnect:(TVIParticipant *)participant {
     if (self.participant == participant) {
         [self cleanupRemoteParticipant];
+    }
+
+    if ([room.participants count] == 0) {
+        [self startVideoPlayer];
     }
 
     [self logMessage:[NSString stringWithFormat:@"Room %@ participant %@ disconnected", room.name, participant.identity]];
