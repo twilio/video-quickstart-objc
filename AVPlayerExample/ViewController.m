@@ -11,11 +11,12 @@
 @import AVFoundation;
 @import TwilioVideo;
 
+#import "AVPlayerView.h"
 #import "Utils.h"
 
 @interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate, TVICameraCapturerDelegate>
 
-// Configure access token manually for testing in `ViewDidLoad`, if desired! Create one manually in the console.
+// Configure access token manually for testing in `viewDidLoad`, if desired! Create one manually in the console.
 @property (nonatomic, strong) NSString *accessToken;
 @property (nonatomic, strong) NSString *tokenUrl;
 
@@ -31,6 +32,7 @@
 #pragma mark AVPlayer
 
 @property (nonatomic, strong) AVPlayer *videoPlayer;
+@property (nonatomic, weak) AVPlayerView *videoPlayerView;
 
 #pragma mark UI Element Outlets and handles
 
@@ -82,6 +84,12 @@
 
     // Prepare local media which we will share with Room Participants.
     [self prepareMedia];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+
+    self.videoPlayerView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
 }
 
 #pragma mark - NSObject
@@ -208,7 +216,11 @@
 
     self.videoPlayer = player;
 
-    // TODO: Add Video UI on screen.
+    // Add Video UI on screen.
+    AVPlayerView *playerView = [[AVPlayerView alloc] initWithPlayer:player];
+    [self.view insertSubview:playerView atIndex:0];
+    self.videoPlayerView = playerView;
+    [self.view setNeedsLayout];
 }
 
 - (void)stopVideoPlayer {
@@ -216,7 +228,9 @@
     [self.videoPlayer removeObserver:self forKeyPath:@"status"];
     self.videoPlayer = nil;
 
-    // TODO: Remove Video UI from screen.
+    // Remove Video UI from screen.
+    [self.videoPlayerView removeFromSuperview];
+    self.videoPlayerView = nil;
 }
 
 - (void)fetchTokenAndConnect {

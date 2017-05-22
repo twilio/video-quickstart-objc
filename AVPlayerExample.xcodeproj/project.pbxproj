@@ -14,6 +14,7 @@
 		8A0A1F241ECD1FFC0008C1AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A0A1F231ECD1FFC0008C1AF /* Assets.xcassets */; };
 		8A0A1F271ECD1FFC0008C1AF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A0A1F251ECD1FFC0008C1AF /* LaunchScreen.storyboard */; };
 		8A85E4951ECE97F6004719C8 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A85E4941ECE97F6004719C8 /* Utils.m */; };
+		8A85E4981ECEA82D004719C8 /* AVPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A85E4971ECEA82D004719C8 /* AVPlayerView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		8A0A1F281ECD1FFC0008C1AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A85E4931ECE97F6004719C8 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		8A85E4941ECE97F6004719C8 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
+		8A85E4961ECEA82D004719C8 /* AVPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVPlayerView.h; sourceTree = "<group>"; };
+		8A85E4971ECEA82D004719C8 /* AVPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVPlayerView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,8 @@
 			children = (
 				8A0A1F1A1ECD1FFC0008C1AF /* AppDelegate.h */,
 				8A0A1F1B1ECD1FFC0008C1AF /* AppDelegate.m */,
+				8A85E4961ECEA82D004719C8 /* AVPlayerView.h */,
+				8A85E4971ECEA82D004719C8 /* AVPlayerView.m */,
 				8A85E4931ECE97F6004719C8 /* Utils.h */,
 				8A85E4941ECE97F6004719C8 /* Utils.m */,
 				8A0A1F1D1ECD1FFC0008C1AF /* ViewController.h */,
@@ -159,6 +164,8 @@
 				8A0A1F1F1ECD1FFC0008C1AF /* ViewController.m in Sources */,
 				8A0A1F1C1ECD1FFC0008C1AF /* AppDelegate.m in Sources */,
 				8A0A1F191ECD1FFC0008C1AF /* main.m in Sources */,
+				8A85E4951ECE97F6004719C8 /* Utils.m in Sources */,
+				8A85E4981ECEA82D004719C8 /* AVPlayerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
