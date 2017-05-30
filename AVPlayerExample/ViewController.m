@@ -14,6 +14,22 @@
 #import "AVPlayerView.h"
 #import "Utils.h"
 
+typedef NS_ENUM(NSUInteger, ViewControllerState) {
+    /**
+     *  The initial lobby UI is shown.
+     */
+    ViewControllerStateLobby = 0,
+    /**
+     *  The AVPlayer UI is shown.
+     */
+    ViewControllerStateMediaPlayer,
+    /**
+     *  The in Room UI is shown.
+     */
+    ViewControllerStateRoom
+};
+
+
 @interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate, TVICameraCapturerDelegate>
 
 // Configure access token manually for testing in `viewDidLoad`, if desired! Create one manually in the console.
@@ -70,9 +86,8 @@
     // the default is http://localhost:8000/token.php
     self.tokenUrl = @"http://localhost:8000/token.php";
 
-    // Disconnect and mic button will be displayed when client is connected to a room.
-    self.disconnectButton.hidden = YES;
-    self.micButton.hidden = YES;
+    // Start with the Lobby UI
+    [self showInterfaceState:ViewControllerStateLobby];
 
     self.roomTextField.delegate = self;
 
@@ -102,7 +117,7 @@
 #pragma mark - Public
 
 - (IBAction)connectButtonPressed:(id)sender {
-    [self showRoomUI:YES];
+    [self showInterfaceState:ViewControllerStateRoom];
     [self dismissKeyboard];
 
     if ([self.accessToken isEqualToString:@"TWILIO_ACCESS_TOKEN"]) {
@@ -246,7 +261,7 @@
                 [self doConnect];
             } else {
                 [self logMessage:[NSString stringWithFormat:@"Error retrieving the access token"]];
-                [self showRoomUI:NO];
+                [self showInterfaceState:ViewControllerStateRoom];
             }
         });
     }];
@@ -258,7 +273,7 @@
         return;
     }
 
-    // Unfortunately, due to an implementation detail in TwilioVideo this must be called every time.
+    // Unfortunately, due to an implementation detail in TwilioVideo this must be called every time you connect.
     [self setupAudioSession];
 
     TVIConnectOptions *connectOptions = [TVIConnectOptions optionsWithToken:self.accessToken
@@ -295,14 +310,15 @@
 }
 
 // Reset the client ui status
-- (void)showRoomUI:(BOOL)inRoom {
-    self.roomTextField.hidden = inRoom;
-    self.connectButton.hidden = inRoom;
-    self.roomLine.hidden = inRoom;
-    self.roomLabel.hidden = inRoom;
-    self.micButton.hidden = !inRoom;
-    self.disconnectButton.hidden = !inRoom;
-    [UIApplication sharedApplication].idleTimerDisabled = inRoom;
+- (void)showInterfaceState:(ViewControllerState)state {
+    self.roomTextField.hidden = state != ViewControllerStateLobby;
+    self.connectButton.hidden = state != ViewControllerStateLobby;
+    self.roomLine.hidden = state != ViewControllerStateLobby;
+    self.roomLabel.hidden = state != ViewControllerStateLobby;
+    self.micButton.hidden = state != ViewControllerStateRoom;
+    self.messageLabel.hidden = state == ViewControllerStateMediaPlayer;
+    self.disconnectButton.hidden = state == ViewControllerStateLobby;
+    [UIApplication sharedApplication].idleTimerDisabled = state != ViewControllerStateLobby;
 }
 
 - (void)dismissKeyboard {
@@ -339,16 +355,18 @@
     } else {
         // If there are no Participants, we will play the pre-roll content instead.
         [self startVideoPlayer];
+        [self showInterfaceState:ViewControllerStateMediaPlayer];
     }
 }
 
 - (void)room:(TVIRoom *)room didDisconnectWithError:(nullable NSError *)error {
     [self logMessage:[NSString stringWithFormat:@"Disconncted from room %@, error = %@", room.name, error]];
 
+    [self stopVideoPlayer];
     [self cleanupRemoteParticipant];
     self.room = nil;
 
-    [self showRoomUI:NO];
+    [self showInterfaceState:ViewControllerStateLobby];
 }
 
 - (void)room:(TVIRoom *)room didFailToConnectWithError:(nonnull NSError *)error{
@@ -356,7 +374,7 @@
 
     self.room = nil;
 
-    [self showRoomUI:NO];
+    [self showInterfaceState:ViewControllerStateLobby];
 }
 
 - (void)room:(TVIRoom *)room participantDidConnect:(TVIParticipant *)participant {
@@ -367,6 +385,7 @@
 
     if ([room.participants count] == 1) {
         [self stopVideoPlayer];
+        [self showInterfaceState:ViewControllerStateRoom];
     }
 
     [self logMessage:[NSString stringWithFormat:@"Room %@ participant %@ connected", room.name, participant.identity]];
@@ -379,6 +398,7 @@
 
     if ([room.participants count] == 0) {
         [self startVideoPlayer];
+        [self showInterfaceState:ViewControllerStateMediaPlayer];
     }
 
     [self logMessage:[NSString stringWithFormat:@"Room %@ participant %@ disconnected", room.name, participant.identity]];
