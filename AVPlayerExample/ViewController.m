@@ -209,8 +209,8 @@
         return;
     }
 
-    NSURL *contentURL = [NSURL URLWithString:@"http://www.podtrac.com/pts/redirect.mp3/traffic.libsyn.com/liftoffrelay/Liftoff_46.mp3"];
-    AVPlayer *player = [AVPlayer playerWithURL:contentURL];
+    NSURL *contentUrl = [NSURL URLWithString:@"http://movietrailers.apple.com/movies/independent/carlos/carlos-tlr1_720p.mov"];
+    AVPlayer *player = [AVPlayer playerWithURL:contentUrl];
     [player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [player play];
 
