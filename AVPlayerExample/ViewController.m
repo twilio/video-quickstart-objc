@@ -90,6 +90,7 @@
     [super viewWillLayoutSubviews];
 
     self.videoPlayerView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
+    self.remoteView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
 }
 
 #pragma mark - NSObject
@@ -220,6 +221,8 @@
     AVPlayerView *playerView = [[AVPlayerView alloc] initWithPlayer:player];
     [self.view insertSubview:playerView atIndex:0];
     self.videoPlayerView = playerView;
+
+    // We will rely on frame based layout to size and position `self.videoPlayerView`.
     [self.view setNeedsLayout];
 }
 
@@ -277,7 +280,7 @@
 }
 
 - (void)setupRemoteView {
-    // Creating `TVIVideoView` programmatically
+    // Creating a `TVIVideoView` programmatically.
     TVIVideoView *remoteView = [[TVIVideoView alloc] init];
 
     // `TVIVideoView` supports UIViewContentModeScaleToFill, UIViewContentModeScaleAspectFill and UIViewContentModeScaleAspectFit
@@ -287,38 +290,8 @@
     [self.view insertSubview:remoteView atIndex:0];
     self.remoteView = remoteView;
 
-    NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:self.remoteView
-                                                               attribute:NSLayoutAttributeCenterX
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:self.view
-                                                               attribute:NSLayoutAttributeCenterX
-                                                              multiplier:1
-                                                                constant:0];
-    [self.view addConstraint:centerX];
-    NSLayoutConstraint *centerY = [NSLayoutConstraint constraintWithItem:self.remoteView
-                                                               attribute:NSLayoutAttributeCenterY
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:self.view
-                                                               attribute:NSLayoutAttributeCenterY
-                                                              multiplier:1
-                                                                constant:0];
-    [self.view addConstraint:centerY];
-    NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:self.remoteView
-                                                             attribute:NSLayoutAttributeWidth
-                                                             relatedBy:NSLayoutRelationEqual
-                                                                toItem:self.view
-                                                             attribute:NSLayoutAttributeWidth
-                                                            multiplier:1
-                                                              constant:0];
-    [self.view addConstraint:width];
-    NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:self.remoteView
-                                                              attribute:NSLayoutAttributeHeight
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:self.view
-                                                              attribute:NSLayoutAttributeHeight
-                                                             multiplier:1
-                                                               constant:0];
-    [self.view addConstraint:height];
+    // We will rely on frame based layout to size and position `self.remoteView`.
+    [self.view setNeedsLayout];
 }
 
 // Reset the client ui status
@@ -471,12 +444,12 @@
 - (void)cameraCapturer:(TVICameraCapturer *)capturer didStartWithSource:(TVICameraCaptureSource)source {
     self.previewView.mirror = (source == TVICameraCaptureSourceFrontCamera);
 
-    if (!self.localVideoTrack.enabled) {
-        self.localVideoTrack.enabled = YES;
-    }
+    self.localVideoTrack.enabled = YES;
 }
 
 - (void)cameraCapturerWasInterrupted:(TVICameraCapturer *)capturer reason:(TVICameraCapturerInterruptionReason)reason {
+    // We will disable `self.localVideoTrack` when the TVICameraCapturer is interrupted.
+    // This prevents other Participants from seeing a frozen frame while the Client is backgrounded.
     self.localVideoTrack.enabled = NO;
 }
 
