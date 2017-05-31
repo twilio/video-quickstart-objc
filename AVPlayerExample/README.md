@@ -4,13 +4,13 @@ This example demonstrates how to use `AVPlayer` to stream Audio & Video content 
 
 ### Setup
 
-See the master README for instructions on how to generate access tokens and connect to a Room.
+See the master [README](https://github.com/twilio/video-quickstart-objc/blob/master/README.md) for instructions on how to generate access tokens and connect to a Room.
 
 ## Usage
 
 This example is very similar to the basic Quickstart. However, if you join a Room with no other Participants the app will stream media using `AVPlayer` while you wait. Once the first Participant joins the media content is paused and the remote video is shown in its place.
 
-In order to use `AVPlayer` along with Twilio Video the `TVIAudioController+CallKit` APIs are used. Unlike normal CallKit operation, our application manually activates and deactivates `AVAudioSession` as needed.
+In order to use `AVPlayer` along with Twilio Video the `TVIAudioController+CallKit` APIs are used. Unlike normal CallKit operation, the application manually activates and deactivates `AVAudioSession` as needed.
 
 ## Known Issues
 

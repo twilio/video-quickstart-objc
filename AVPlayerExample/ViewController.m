@@ -2,8 +2,7 @@
 //  ViewController.m
 //  AVPlayerExample
 //
-//  Created by Chris Eagleston on 5/16/17.
-//  Copyright © 2017 Twilio Inc. All rights reserved.
+//  Copyright © 2016-2017 Twilio, Inc. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -29,6 +28,8 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
     ViewControllerStateRoom
 };
 
+NSString *const kVideoMovURL = @"http://movietrailers.apple.com/movies/independent/carlos/carlos-tlr1_720p.mov";
+NSString *const kStatusKey = @"status";
 
 @interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate, TVICameraCapturerDelegate>
 
@@ -53,7 +54,7 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
 #pragma mark UI Element Outlets and handles
 
 // `TVIVideoView` created from a storyboard
-@property (weak, nonatomic) IBOutlet TVIVideoView *previewView;
+@property (nonatomic, weak) IBOutlet TVIVideoView *previewView;
 
 @property (nonatomic, weak) IBOutlet UIView *connectButton;
 @property (nonatomic, weak) IBOutlet UIButton *disconnectButton;
@@ -117,7 +118,7 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
 #pragma mark - Public
 
 - (IBAction)connectButtonPressed:(id)sender {
-    [self showInterfaceState:ViewControllerStateRoom];
+    [self showInterfaceState:ViewControllerStateMediaPlayer];
     [self dismissKeyboard];
 
     if ([self.accessToken isEqualToString:@"TWILIO_ACCESS_TOKEN"]) {
@@ -220,14 +221,14 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
 
 - (void)startVideoPlayer {
     if (self.videoPlayer != nil) {
-        [self logMessage:@"Already prepared AVPlayer."];
+        [self logMessage:@"Using an already prepared AVPlayer"];
         [self.videoPlayer play];
         return;
     }
 
-    NSURL *contentUrl = [NSURL URLWithString:@"http://movietrailers.apple.com/movies/independent/carlos/carlos-tlr1_720p.mov"];
+    NSURL *contentUrl = [NSURL URLWithString:kVideoMovURL];
     AVPlayer *player = [AVPlayer playerWithURL:contentUrl];
-    [player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [player addObserver:self forKeyPath:kStatusKey options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     [player play];
 
     self.videoPlayer = player;
@@ -243,7 +244,7 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
 
 - (void)stopVideoPlayer {
     [self.videoPlayer pause];
-    [self.videoPlayer removeObserver:self forKeyPath:@"status"];
+    [self.videoPlayer removeObserver:self forKeyPath:kStatusKey];
     self.videoPlayer = nil;
 
     // Remove Video UI from screen.
@@ -352,6 +353,7 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
     if (room.participants.count > 0) {
         self.participant = room.participants[0];
         self.participant.delegate = self;
+        [self showInterfaceState:ViewControllerStateRoom];
     } else {
         // If there are no Participants, we will play the pre-roll content instead.
         [self startVideoPlayer];
@@ -365,6 +367,9 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
     [self stopVideoPlayer];
     [self cleanupRemoteParticipant];
     self.room = nil;
+    
+    // We will not call `resetAudioSession` explicitly because video SDK deactivates the audio session and stops audio
+    // unit when it is disconnected from a Room.
 
     [self showInterfaceState:ViewControllerStateLobby];
 }
