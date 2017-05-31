@@ -28,8 +28,8 @@ typedef NS_ENUM(NSUInteger, ViewControllerState) {
     ViewControllerStateRoom
 };
 
-NSString *const kVideoMovURL = @"http://movietrailers.apple.com/movies/independent/carlos/carlos-tlr1_720p.mov";
-NSString *const kStatusKey = @"status";
+NSString *const kVideoMovURL = @"https://s3-us-west-1.amazonaws.com/avplayervideo/What+Is+Cloud+Communications.mov";
+NSString *const kStatusKey   = @"status";
 
 @interface ViewController () <UITextFieldDelegate, TVIParticipantDelegate, TVIRoomDelegate, TVIVideoViewDelegate, TVICameraCapturerDelegate>
 
