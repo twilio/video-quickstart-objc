@@ -210,13 +210,15 @@ NSString *const kStatusKey = @"status";
 }
 
 - (void)resetAudioSession {
-    NSError *error = nil;
-    [[AVAudioSession sharedInstance] setActive:NO error:&error];
-    if (error) {
-        [self logMessage:[NSString stringWithFormat:@"Couldn't activate AVAudioSession. %@", error]];
-    }
-
     [[TVIAudioController sharedController] stopAudio];
+
+    NSError *error = nil;
+    [[AVAudioSession sharedInstance] setActive:NO
+                                   withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
+                                         error:&error];
+    if (error) {
+        [self logMessage:[NSString stringWithFormat:@"Couldn't deactivate AVAudioSession. %@", error]];
+    }
 }
 
 - (void)startVideoPlayer {
@@ -274,7 +276,7 @@ NSString *const kStatusKey = @"status";
         return;
     }
 
-    // Unfortunately, due to an implementation detail in TwilioVideo this must be called every time you connect.
+    // Since we are configuring audio session explicitly, we will call setupAudioSession every time we attempt to connect.
     [self setupAudioSession];
 
     TVIConnectOptions *connectOptions = [TVIConnectOptions optionsWithToken:self.accessToken
@@ -363,14 +365,16 @@ NSString *const kStatusKey = @"status";
 
 - (void)room:(TVIRoom *)room didDisconnectWithError:(nullable NSError *)error {
     [self logMessage:[NSString stringWithFormat:@"Disconncted from room %@, error = %@", room.name, error]];
-
-    [self stopVideoPlayer];
+    
+    // If AVPlayer is playing, we will not deactivate the audio session
+    if (!self.videoPlayer) {
+        [self resetAudioSession];
+    } else {
+        [self stopVideoPlayer];
+    }
+    
     [self cleanupRemoteParticipant];
     self.room = nil;
-    
-    // We will not call `resetAudioSession` explicitly because video SDK deactivates the audio session and stops audio
-    // unit when it is disconnected from a Room.
-
     [self showInterfaceState:ViewControllerStateLobby];
 }
 
