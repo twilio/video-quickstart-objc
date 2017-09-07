@@ -312,7 +312,10 @@
         self.remoteParticipant = participant;
         self.remoteParticipant.delegate = self;
     }
-    [self logMessage:[NSString stringWithFormat:@"Room %@ participant %@ connected", room.name, participant.identity]];
+    [self logMessage:[NSString stringWithFormat:@"Participant %@ connected with %lu audio and %lu video tracks",
+                      participant.identity,
+                      (unsigned long)[participant.audioTracks count],
+                      (unsigned long)[participant.videoTracks count]]];
 }
 
 - (void)room:(TVIRoom *)room participantDidDisconnect:(TVIRemoteParticipant *)participant {
