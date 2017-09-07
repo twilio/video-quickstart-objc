@@ -423,7 +423,7 @@ NSString *const kStatusKey   = @"status";
 - (void)remoteParticipant:(TVIRemoteParticipant *)participant
       publishedVideoTrack:(TVIRemoteVideoTrackPublication *)publication {
     
-    // Remote participant has offered to share the video Track.
+    // Remote Participant has offered to share the video Track.
     
     [self logMessage:[NSString stringWithFormat:@"Participant %@ published video track.", participant.identity]];
 }
@@ -431,7 +431,7 @@ NSString *const kStatusKey   = @"status";
 - (void)remoteParticipant:(TVIRemoteParticipant *)participant
     unpublishedVideoTrack:(TVIRemoteVideoTrackPublication *)publication {
     
-    // Remote participant has stopped sharing the video Track.
+    // Remote Participant has stopped sharing the video Track.
     
     [self logMessage:[NSString stringWithFormat:@"Participant %@ unpublished video track.", participant.identity]];
 }
@@ -439,7 +439,7 @@ NSString *const kStatusKey   = @"status";
 - (void)remoteParticipant:(TVIRemoteParticipant *)participant
       publishedAudioTrack:(TVIRemoteAudioTrackPublication *)publication {
     
-    // Remote participant has offered to share the audio Track.
+    // Remote Participant has offered to share the audio Track.
     
     [self logMessage:[NSString stringWithFormat:@"Participant %@ published audio track.", participant.identity]];
 }
@@ -447,7 +447,7 @@ NSString *const kStatusKey   = @"status";
 - (void)remoteParticipant:(TVIRemoteParticipant *)participant
     unpublishedAudioTrack:(TVIRemoteAudioTrackPublication *)publication {
     
-    // Remote participant has stopped sharing the audio Track.
+    // Remote Participant has stopped sharing the audio Track.
     
     [self logMessage:[NSString stringWithFormat:@"Participant %@ unpublished audio track.", participant.identity]];
 }
@@ -456,7 +456,7 @@ NSString *const kStatusKey   = @"status";
                    publication:(TVIRemoteVideoTrackPublication *)publication
                 forParticipant:(TVIRemoteParticipant *)participant {
     
-    // We are subscribed to remote Participant's audio Track. We will start receiving the
+    // We are subscribed to the remote Participant's audio Track. We will start receiving the
     // remote Participant's video frames now.
     
     [self logMessage:[NSString stringWithFormat:@"Subscribed to video track for Participant %@", participant.identity]];
@@ -471,7 +471,7 @@ NSString *const kStatusKey   = @"status";
                        publication:(TVIRemoteVideoTrackPublication *)publication
                     forParticipant:(TVIRemoteParticipant *)participant {
     
-    // We are unsubscribed from remote Participant's video Track. We will no longer receive the
+    // We are unsubscribed from the remote Participant's video Track. We will no longer receive the
     // remote Participant's video.
     
     [self logMessage:[NSString stringWithFormat:@"Unsubscribed from video track for Participant %@", participant.identity]];
@@ -486,7 +486,7 @@ NSString *const kStatusKey   = @"status";
                    publication:(TVIRemoteAudioTrackPublication *)publication
                 forParticipant:(TVIRemoteParticipant *)participant {
     
-    // We are subscribed to remote Participant's audio Track. We will start receiving the
+    // We are subscribed to the remote Participant's audio Track. We will start receiving the
     // remote Participant's audio now.
     
     [self logMessage:[NSString stringWithFormat:@"Subscribed to audio track for Participant %@", participant.identity]];
@@ -496,7 +496,7 @@ NSString *const kStatusKey   = @"status";
                        publication:(TVIRemoteAudioTrackPublication *)publication
                     forParticipant:(TVIRemoteParticipant *)participant {
     
-    // We are unsubscribed from remote Participant's audio Track. We will no longer receive the
+    // We are unsubscribed from the remote Participant's audio Track. We will no longer receive the
     // remote Participant's audio.
     
     [self logMessage:[NSString stringWithFormat:@"Unsubscribed from audio track for Participant %@", participant.identity]];
