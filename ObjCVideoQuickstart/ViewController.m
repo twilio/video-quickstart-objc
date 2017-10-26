@@ -68,7 +68,7 @@
     // Preview our local camera track in the local video preview view.
     [self startPreview];
 
-    // Disconnect and mic button will be displayed when client is connected to a room.
+    // Disconnect, share location and mic button will be displayed when the Client is connected to a Room.
     self.disconnectButton.hidden = YES;
     self.micButton.hidden = YES;
     self.shareLocationButton.hidden = YES;
