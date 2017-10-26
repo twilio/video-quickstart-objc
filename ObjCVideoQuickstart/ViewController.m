@@ -80,7 +80,6 @@
     [self.view addGestureRecognizer:tap];
 
     self.locationManager = [CLLocationManager new];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
