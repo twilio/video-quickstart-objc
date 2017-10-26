@@ -491,7 +491,7 @@
 
     [self logMessage:[NSString stringWithFormat:@"Subscribed to data track for Participant %@", participant.identity]];
 
-    publication.remoteTrack.delegate = self;
+    dataTrack.delegate = self;
 }
 
 - (void)unsubscribedFromDataTrack:(TVIRemoteDataTrack *)dataTrack
@@ -502,8 +502,6 @@
     // remote Participant's data messages.
 
     [self logMessage:[NSString stringWithFormat:@"Unsubscribed from data track for Participant %@", participant.identity]];
-
-    publication.remoteTrack.delegate = nil;
 }
 
 - (void)remoteParticipant:(TVIRemoteParticipant *)participant
