@@ -54,7 +54,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.title = @"QuickStart";
+    self.messageLabel.adjustsFontSizeToFitWidth = YES;
+    self.messageLabel.minimumScaleFactor = 0.75;
 
     [self logMessage:[NSString stringWithFormat:@"TwilioVideo v%@", [TwilioVideo version]]];
 
