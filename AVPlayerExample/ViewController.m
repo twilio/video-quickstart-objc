@@ -97,8 +97,13 @@ NSString *const kStatusKey   = @"status";
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
 
-    // Manually configure the AudioSession
-    [self startAudioDevice];
+    /**
+     * We will create an audio device and manage it's lifecycle in response to the AVPlayer events. Please note that the
+     * SDK does not support the use of multiple audio devices at the same time. If you've already connected to a Room,
+     * then all future connection attempts must use the same TVIDefaultAudioDevice as the first Room. Once all the existing
+     * Rooms are disconnected you are free to choose a new audio device for your next connection attempt.
+     */
+    self.audioDevice = [TVIDefaultAudioDevice audioDevice];
 
     // Prepare local media which we will share with Room Participants.
     [self prepareMedia];
@@ -197,33 +202,6 @@ NSString *const kStatusKey   = @"status";
 }
 
 - (void)startAudioDevice {
-    if (!self.audioDevice) {
-        self.audioDevice = [TVIDefaultAudioDevice audioDeviceWithBlock:^{
-            kDefaultAVAudioSessionConfigurationBlock();
-
-            AVAudioSession *session = [AVAudioSession sharedInstance];
-
-            NSError *error = nil;
-            if ([session respondsToSelector:@selector(setCategory:mode:options:error:)]) {
-                if (![session setCategory:AVAudioSessionCategoryPlayAndRecord
-                                     mode:AVAudioSessionModeVideoChat
-                                  options:AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionMixWithOthers
-                                    error:&error]) {
-                    NSLog(@"AVAudioSession setCategory:options:mode:error: %@",error);
-                }
-            } else {
-                if (![session setCategory:AVAudioSessionCategoryPlayAndRecord
-                              withOptions:AVAudioSessionCategoryOptionAllowBluetooth
-                                    error:&error]) {
-                    NSLog(@"AVAudioSession setCategory:withOptions %@",error);
-                }
-
-                if (![session setMode:AVAudioSessionModeVideoChat error:&error]) {
-                    NSLog(@"AVAudioSession setMode %@",error);
-                }
-            }
-        }];
-    }
     self.audioDevice.enabled = YES;
 }
 
@@ -286,7 +264,7 @@ NSString *const kStatusKey   = @"status";
         return;
     }
 
-    // Since we are configuring audio session explicitly, we will call StartAudioDevice every time we attempt to connect.
+    // Since we are configuring audio session explicitly, we will call startAudioDevice every time we attempt to connect.
     [self startAudioDevice];
 
     TVIConnectOptions *connectOptions = [TVIConnectOptions optionsWithToken:self.accessToken
@@ -299,6 +277,8 @@ NSString *const kStatusKey   = @"status";
                                                                           // The name of the Room where the Client will attempt to connect to. Please note that if you pass an empty
                                                                           // Room `name`, the Client will create one for you. You can get the name or sid from any connected Room.
                                                                           builder.roomName = self.roomTextField.text;
+
+                                                                          // Use the audio device that we created earlier. All connection attempts will use the same device.
 
                                                                           builder.audioDevice = self.audioDevice;
                                                                       }];
@@ -530,6 +510,20 @@ NSString *const kStatusKey   = @"status";
 - (void)remoteParticipant:(TVIRemoteParticipant *)participant
        disabledAudioTrack:(TVIRemoteAudioTrackPublication *)publication {
     [self logMessage:[NSString stringWithFormat:@"Participant %@ disabled audio track.", participant.identity]];
+}
+
+- (void)failedToSubscribeToAudioTrack:(TVIRemoteAudioTrackPublication *)publication
+                                error:(NSError *)error
+                       forParticipant:(TVIRemoteParticipant *)participant {
+    [self logMessage:[NSString stringWithFormat:@"Participant %@ failed to subscribe to %@ audio track.",
+                      participant.identity, publication.trackName]];
+}
+
+- (void)failedToSubscribeToVideoTrack:(TVIRemoteVideoTrackPublication *)publication
+                                error:(NSError *)error
+                       forParticipant:(TVIRemoteParticipant *)participant {
+    [self logMessage:[NSString stringWithFormat:@"Participant %@ failed to subscribe to %@ video track.",
+                      participant.identity, publication.trackName]];
 }
 
 #pragma mark - TVIVideoViewDelegate
