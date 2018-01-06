@@ -279,7 +279,6 @@ NSString *const kStatusKey   = @"status";
                                                                           builder.roomName = self.roomTextField.text;
 
                                                                           // Use the audio device that we created earlier. All connection attempts will use the same device.
-
                                                                           builder.audioDevice = self.audioDevice;
                                                                       }];
 
