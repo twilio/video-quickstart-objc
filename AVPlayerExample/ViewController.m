@@ -178,7 +178,7 @@ NSString *const kStatusKey   = @"status";
         AVCaptureDevice *frontCamera = [TVICameraSource captureDeviceForPosition:AVCaptureDevicePositionFront];
 
         if (frontCamera != nil) {
-            [self.camera startCaptureWithDevice:frontCamera completion:^(AVCaptureDevice *device, NSError *error) {
+            [self.camera startCaptureWithDevice:frontCamera completion:^(AVCaptureDevice *device, TVIVideoFormat *format, NSError *error) {
                 if (error != nil) {
                     [self logMessage:[NSString stringWithFormat:@"Capture failed with error.\ncode = %lu error = %@", error.code, error.localizedDescription]];
                 } else {
@@ -199,7 +199,7 @@ NSString *const kStatusKey   = @"status";
     }
 
     if (newDevice != nil) {
-        [self.camera selectCaptureDevice:newDevice completion:^(AVCaptureDevice *device, NSError *error) {
+        [self.camera selectCaptureDevice:newDevice completion:^(AVCaptureDevice *device, TVIVideoFormat *format, NSError *error) {
             if (error != nil) {
                 [self logMessage:[NSString stringWithFormat:@"Error selecting capture device: %@", error.localizedDescription]];
             } else {
