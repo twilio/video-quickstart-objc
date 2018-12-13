@@ -180,7 +180,7 @@ NSString *const kStatusKey   = @"status";
         if (frontCamera != nil) {
             [self.camera startCaptureWithDevice:frontCamera completion:^(AVCaptureDevice *device, TVIVideoFormat *format, NSError *error) {
                 if (error != nil) {
-                    [self logMessage:[NSString stringWithFormat:@"Capture failed with error.\ncode = %lu error = %@", error.code, error.localizedDescription]];
+                    [self logMessage:[NSString stringWithFormat:@"Start capture failed with error.\ncode = %lu error = %@", error.code, error.localizedDescription]];
                 } else {
                     self.previewView.mirror = (device.position == AVCaptureDevicePositionFront);
                 }
@@ -201,7 +201,7 @@ NSString *const kStatusKey   = @"status";
     if (newDevice != nil) {
         [self.camera selectCaptureDevice:newDevice completion:^(AVCaptureDevice *device, TVIVideoFormat *format, NSError *error) {
             if (error != nil) {
-                [self logMessage:[NSString stringWithFormat:@"Error selecting capture device: %@", error.localizedDescription]];
+                [self logMessage:[NSString stringWithFormat:@"Error selecting capture device.\ncode = %lu error = %@", error.code, error.localizedDescription]];
             } else {
                 self.previewView.mirror = (device.position == AVCaptureDevicePositionFront);
             }
