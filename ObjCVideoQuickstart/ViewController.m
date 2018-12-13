@@ -116,39 +116,40 @@
 #pragma mark - Private
 
 - (void)startPreview {
-    // TVICameraCapturer is not supported with the Simulator.
+    // TVICameraSource is not supported with the Simulator.
     if ([PlatformUtils isSimulator]) {
         [self.previewView removeFromSuperview];
         return;
     }
-    
-    self.camera = [[TVICameraSource alloc] initWithDelegate:self];
-    self.localVideoTrack = [TVILocalVideoTrack trackWithSource:self.camera
-                                                       enabled:YES
-                                                          name:@"Cameara"];
-    if (!self.localVideoTrack) {
-        [self logMessage:@"Failed to add video track"];
-    } else {
+
+    AVCaptureDevice *frontCamera = [TVICameraSource captureDeviceForPosition:AVCaptureDevicePositionFront];
+    AVCaptureDevice *backCamera = [TVICameraSource captureDeviceForPosition:AVCaptureDevicePositionBack];
+
+    if (frontCamera != nil || backCamera != nil) {
+        self.camera = [[TVICameraSource alloc] initWithDelegate:self];
+        self.localVideoTrack = [TVILocalVideoTrack trackWithSource:self.camera
+                                                           enabled:YES
+                                                              name:@"Cameara"];
         // Add renderer to video track for local preview
         [self.localVideoTrack addRenderer:self.previewView];
-        
         [self logMessage:@"Video track created"];
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                              action:@selector(flipCamera)];
-        [self.previewView addGestureRecognizer:tap];
 
-        AVCaptureDevice *frontCamera = [TVICameraSource captureDeviceForPosition:AVCaptureDevicePositionFront];
-
-        if (frontCamera != nil) {
-            [self.camera startCaptureWithDevice:frontCamera completion:^(AVCaptureDevice *device, TVIVideoFormat *format, NSError *error) {
-                if (error != nil) {
-                    [self logMessage:[NSString stringWithFormat:@"Start capture failed with error.\ncode = %lu error = %@", error.code, error.localizedDescription]];
-                } else {
-                    self.previewView.mirror = (device.position == AVCaptureDevicePositionFront);
-                }
-            }];
+        if (frontCamera != nil && backCamera != nil) {
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                  action:@selector(flipCamera)];
+            [self.previewView addGestureRecognizer:tap];
         }
+
+        [self.camera startCaptureWithDevice:frontCamera != nil ? frontCamera : backCamera
+                                 completion:^(AVCaptureDevice *device, TVIVideoFormat *format, NSError *error) {
+                                     if (error != nil) {
+                                         [self logMessage:[NSString stringWithFormat:@"Start capture failed with error.\ncode = %lu error = %@", error.code, error.localizedDescription]];
+                                     } else {
+                                         self.previewView.mirror = (device.position == AVCaptureDevicePositionFront);
+                                     }
+                                 }];
+    } else {
+        [self logMessage:@"No front or back capture device found!"];
     }
 }
 
