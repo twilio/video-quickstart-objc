@@ -410,6 +410,15 @@ NSString *const kStatusKey   = @"status";
     [self showInterfaceState:ViewControllerStateLobby];
 }
 
+- (void)room:(TVIRoom *)room isReconnectingWithError:(NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"Reconnecting due to %@", error.localizedDescription];
+    [self logMessage:message];
+}
+
+- (void)didReconnectToRoom:(TVIRoom *)room {
+    [self logMessage:@"Reconnected to room"];
+}
+
 - (void)room:(TVIRoom *)room participantDidConnect:(TVIRemoteParticipant *)participant {
     if (!self.remoteParticipant) {
         self.remoteParticipant = participant;
