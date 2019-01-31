@@ -129,7 +129,7 @@
         self.camera = [[TVICameraSource alloc] initWithDelegate:self];
         self.localVideoTrack = [TVILocalVideoTrack trackWithSource:self.camera
                                                            enabled:YES
-                                                              name:@"Cameara"];
+                                                              name:@"Camera"];
         // Add renderer to video track for local preview
         [self.localVideoTrack addRenderer:self.previewView];
         [self logMessage:@"Video track created"];
