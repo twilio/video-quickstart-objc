@@ -1,7 +1,7 @@
 source 'https://github.com/CocoaPods/Specs'
 
 workspace 'VideoQuickStart'
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 abstract_target 'TwilioVideo' do
   pod 'TwilioVideo', '~> 2.10'
