@@ -2,6 +2,10 @@
 [ ![Download](https://img.shields.io/badge/Download-iOS%20SDK-blue.svg) ](https://www.twilio.com/docs/video/ios-v1-getting-started#1-get-the-programmable-video-ios-sdk)
 [![Docs](https://img.shields.io/badge/iOS%20Docs-OK-blue.svg)](https://twilio.github.io/twilio-video-ios/docs/latest_1.x/index.html)
 
+> **Deprecation Notice - video-quickstart-objc repository**
+>
+> This repository has been deprecated and shall no longer be maintained. All Objective-C examples have been merged into the [video-quickstart-ios](https://github.com/twilio/video-quickstart-ios) repository and shall continued to be maintained there.
+>
 > NOTE: These sample applications use the Twilio Video 1.x APIs. For examples using our 2.x APIs, please see the [master](https://github.com/twilio/video-quickstart-objc/tree/master) branch.
 
 # Twilio Video Quickstart for Objective-C
