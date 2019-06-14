@@ -4,6 +4,10 @@
 
 # Twilio Video Quickstart for Objective-C
 
+> **Deprecation Notice - video-quickstart-objc repository**
+>
+> This repository has been deprecated and will no longer be maintained. All Objective-C examples have been merged into the [video-quickstart-ios](https://github.com/twilio/video-quickstart-ios) repository and will continue to be maintained there.
+>
 > NOTE: These sample applications use the Twilio Video 3.x APIs. For examples using our 2.x APIs, please see the [master](https://github.com/twilio/video-quickstart-objc) branch. For examples using our 1.x APIs, please see the [1.x](https://github.com/twilio/video-quickstart-objc/tree/1.x) branch.
 
 Get started with Video on iOS:
